@@ -1,6 +1,6 @@
 # Better Follower Equipment Control
 
-This mod allows for better control of what will folloer wear/not wear.
+This mod allows for better control of what armor will follower wear/not wear.
 
 ## Requirements
 
