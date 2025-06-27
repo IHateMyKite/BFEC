@@ -25,6 +25,10 @@ namespace BFEC
   {
     if (!_Ready) return true;
     
+    if (a_actor == nullptr) return true;
+    
+    LOG("EquipManager::UpdateOutfit({}) called",a_actor->GetName())
+    
     const bool loc_isFollower = a_actor->GetActorRuntimeData().boolBits.any(RE::Actor::BOOL_BITS::kPlayerTeammate);
     
     if (loc_isFollower && a_npc && a_actor && !a_actor->IsInFaction(_Blacklist))
@@ -91,30 +95,40 @@ namespace BFEC
         static std::vector<std::string> loc_buttons = {"EQUIP","MOVE","BACK"};
         // Check if player wants to just move the item, or move it and also equip it
         std::erase_if(loc_buttons, [](const std::string& text) { return text.empty(); });
-        MessageboxManager::GetSingleton()->ShowMessageBox(std::format("What do you want to do with {}?",a_object->GetName()), loc_buttons, [loc_target,a_object,a_extraList,a_count,a_fromRefr,a_param,this](uint32_t result) 
+        MessageboxManager::GetSingleton()->ShowMessageBox(std::format("What do you want to do with {}?",a_object->GetName()), loc_buttons, [loc_target,a_object,a_param,this](uint32_t result) 
         {
           LOG("Button selected {}",result)
           switch (result)
           {
             case 0U:
             // EQUIP
-            if (Hooks::AddObjectToContainerHook::func(a_param.menu,a_param.object,a_param.count,a_param.mode))
+            Hooks::ContainerMenuPostDisplay::AddCallout([loc_target,a_object,a_param]
             {
-              Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
-            }
-            SKSE::GetTaskInterface()->AddTask([result,loc_target,a_object,a_extraList,a_count,a_fromRefr,a_param,this]
-            {
-              RE::ActorEquipManager::GetSingleton()->EquipObject(loc_target,a_object,a_extraList,1,nullptr,false,false,true,true);
+              if (Hooks::AddObjectToContainerHook::func(a_param.menu,a_param.object,a_param.count,a_param.mode))
+              {
+                Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
+              }
+              SKSE::GetTaskInterface()->AddTask([loc_target,a_object,a_param]
+              {
+                RE::ActorEquipManager::GetSingleton()->EquipObject(loc_target,a_object);
+                Hooks::ContainerMenuPostDisplay::AddCallout([a_param]
+                {
+                  Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
+                });
+              });
             });
             break;
             case 2U:
             // BACK
             break;
             default:
-            if (Hooks::AddObjectToContainerHook::func(a_param.menu,a_param.object,a_param.count,a_param.mode))
+            Hooks::ContainerMenuPostDisplay::AddCallout([a_param]
             {
-              Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
-            }
+              if (Hooks::AddObjectToContainerHook::func(a_param.menu,a_param.object,a_param.count,a_param.mode))
+              {
+                Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
+              }
+            });
             break;
           }
 
@@ -128,34 +142,44 @@ namespace BFEC
         static std::vector<std::string> loc_buttons = {"EQUIP","UNEQUIP","MOVE","BACK"};
         // Check if player wants to just move the item, or move it and also equip it
         std::erase_if(loc_buttons, [](const std::string& text) { return text.empty(); });
-        MessageboxManager::GetSingleton()->ShowMessageBox(std::format("What do you want to do with {}?",a_object->GetName()), loc_buttons, [loc_source,a_object,a_extraList,a_count,a_fromRefr,a_param,this](uint32_t result) 
+        MessageboxManager::GetSingleton()->ShowMessageBox(std::format("What do you want to do with {}?",a_object->GetName()), loc_buttons, [loc_source,a_object,a_param,this](uint32_t result) 
         {
           LOG("Button selected {}",result)
-
           switch (result)
           {
             case 0U:
             // EQUIP
-            SKSE::GetTaskInterface()->AddTask([result,loc_source,a_object,a_extraList,a_count,a_fromRefr,a_param,this]
+            SKSE::GetTaskInterface()->AddTask([loc_source,a_object,a_param]
             {
-              RE::ActorEquipManager::GetSingleton()->EquipObject(loc_source,a_object,a_extraList,1,nullptr,false,false,true,true);
+              RE::ActorEquipManager::GetSingleton()->EquipObject(loc_source,a_object);
+              Hooks::ContainerMenuPostDisplay::AddCallout([a_param]
+              {
+                Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
+              });
             });
             break;
             case 1U:
             // UNEQUIP
-            SKSE::GetTaskInterface()->AddTask([result,loc_source,a_object,a_extraList,a_count,a_fromRefr,a_param,this]
+            SKSE::GetTaskInterface()->AddTask([loc_source,a_object,a_param]
             {
-              RE::ActorEquipManager::GetSingleton()->UnequipObject(loc_source,a_object,a_extraList);
+              RE::ActorEquipManager::GetSingleton()->UnequipObject(loc_source,a_object);
+              Hooks::ContainerMenuPostDisplay::AddCallout([a_param]
+              {
+                Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
+              });
             });
             break;
             case 3U:
             // BACK
             break;
             default:
-            if (Hooks::AddObjectToContainerHook::func(a_param.menu,a_param.object,a_param.count,1))
+            Hooks::ContainerMenuPostDisplay::AddCallout([a_param]
             {
-              Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
-            }
+              if (Hooks::AddObjectToContainerHook::func(a_param.menu,a_param.object,a_param.count,1))
+              {
+                Hooks::AddObjectToContainerHook::UpdateContainerMenu(a_param.menu);
+              }
+            });
             break;
           }
 

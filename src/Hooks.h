@@ -16,7 +16,6 @@ namespace BFEC
         {
         public:
             static inline void Install(void);
-            //static void thunk(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraList, int32_t a_count, RE::TESObjectREFR* a_fromRefr);
             static bool thunk(RE::ContainerMenu* a_this, RE::TESBoundObject** a_object, uint16_t a_count, uint8_t a_unk4);
             //__int64 a1, __int64 *a_actor, unsigned int a3, unsigned __int8 a4
             static inline REL::Relocation<decltype(thunk)> func;
@@ -30,7 +29,19 @@ namespace BFEC
               uint16_t              count;
               uint8_t               mode;
             };
-            
+        };
+        
+        class ContainerMenuPostDisplay
+        {
+        public:
+            using CalloutFn = void(void);
+            static inline void Install(void);
+            static void thunk(RE::ContainerMenu* a_this);
+            static inline REL::Relocation<decltype(thunk)> func;
+            static void AddCallout(std::function<CalloutFn> a_callout);
+        private:
+            static std::mutex _mutex;
+            static std::function<CalloutFn> _callout;
         };
     }
     

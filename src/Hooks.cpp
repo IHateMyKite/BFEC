@@ -73,24 +73,12 @@ namespace BFEC
       
       if ((a_this->GetContainerMode() == RE::ContainerMenu::ContainerMode::kNPCMode) && a_count && loc_target)
       {
-        bool loc_res;
+        bool loc_res = false;
         
-        auto loc_extradatalist = a_this->GetRuntimeData().itemList->GetSelectedItem()->data.objDesc->extraLists;
-        
-        //LOG("Extra data count = {}",loc_extradata->size())
-        
+        //auto loc_extradatalist = a_this->GetRuntimeData().itemList->GetSelectedItem()->data.objDesc->extraLists;
+
         RE::ExtraDataList* loc_extradata = nullptr;
-        
-        if (loc_extradatalist)
-        {
-          for (auto&& it : *loc_extradatalist)
-          {
-            LOG("Extra list found")
-            loc_extradata = it; // use the first one in tree
-            break;
-          }
-        }
-        
+
         // NPC mode
         if (a_mode == 0x0U) // Player -> NPC
         {
@@ -122,6 +110,38 @@ namespace BFEC
       REL::Relocation<uint64_t(RE::ItemList*,RE::Actor*)> UpdateMenu{ RELOCATION_ID(50099, 51031)};
       return UpdateMenu(a_this->GetRuntimeData().itemList,RE::PlayerCharacter::GetSingleton());
     }
+    
+    std::function<ContainerMenuPostDisplay::CalloutFn> ContainerMenuPostDisplay::_callout = nullptr;
+    std::mutex ContainerMenuPostDisplay::_mutex = std::mutex();
+    
+    inline void ContainerMenuPostDisplay::Install(void)
+    {
+      REL::Relocation<std::uintptr_t> vtbl_containermenu{RELOCATION_ID(268222, 215061).address()};
+      func = vtbl_containermenu.write_vfunc(0x06, thunk);
+    }
+    
+    void ContainerMenuPostDisplay::thunk(RE::ContainerMenu* a_this)
+    {
+      _mutex.lock();
+      if (_callout != nullptr) 
+      {
+        LOG("Calling callout")
+        _callout();
+        _callout = nullptr;
+      }
+      _mutex.unlock();
+      
+      func(a_this);
+    }
+    
+    void ContainerMenuPostDisplay::AddCallout(std::function<ContainerMenuPostDisplay::CalloutFn> a_callout)
+    {
+      _mutex.lock();
+      assert(_callout == nullptr);
+      LOG("Adding callout")
+      _callout = a_callout;
+      _mutex.unlock();
+    }
   }
   
   
@@ -134,7 +154,7 @@ namespace BFEC
       
       Hooks::UpdateNPCOutfitHook::Install();
       Hooks::AddObjectToContainerHook::Install();
-      
+      Hooks::ContainerMenuPostDisplay::Install();
     }
   }
 }
