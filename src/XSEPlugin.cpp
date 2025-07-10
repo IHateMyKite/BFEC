@@ -37,6 +37,10 @@ void Listener(SKSE::MessagingInterface::Message* message) noexcept
     BFEC::EquipManager::GetSingleton()->Init();
     BFEC::MessageboxManager::GetSingleton()->Init();
   }
+  else if (message->type == SKSE::MessagingInterface::kInputLoaded)
+  {
+    BFEC::EquipManager::GetSingleton()->AddKeySink();
+  }
 }
 
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)

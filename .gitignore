@@ -3,3 +3,4 @@ dist/
 .vs*/
 extern/
 CMakeUserPresets.json
+*pex

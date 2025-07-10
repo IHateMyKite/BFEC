@@ -19,11 +19,11 @@ namespace BFEC
       DetourAttach(&(PVOID&)func, (PBYTE)&thunk);
       if (DetourTransactionCommit() != NO_ERROR)
       {
-      ERROR("Failed to install UpdateNPCOutfitHook");
+        ERROR("Failed to install UpdateNPCOutfitHook");
       }
       else
       {
-      LOG("UpdateNPCOutfitHook installed")
+        LOG("UpdateNPCOutfitHook installed")
       }
     }
     
