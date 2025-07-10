@@ -5,6 +5,10 @@
 SINGLETONBODY(BFEC::EquipManager);
 SINGLETONBODY(BFEC::KeyEventSink)
 
+#define VALIDATE_START()  if (
+#define VALIDATE_PTR(x)   x != nullptr &&
+#define VALIDATE_END()    true) {_Ready = true;}
+        
 namespace BFEC
 {
   void EquipManager::Init()
@@ -17,7 +21,16 @@ namespace BFEC
         _OutfitEquippedFaction = reinterpret_cast<RE::TESFaction*>(loc_datahandler->LookupForm(0x000800, "BetterFollowerEquipControl.esp"));
         _Blacklist = reinterpret_cast<RE::TESFaction*>(loc_datahandler->LookupForm(0x000801, "BetterFollowerEquipControl.esp"));
         _TransferKey = reinterpret_cast<RE::TESGlobal*>(loc_datahandler->LookupForm(0x000803, "BetterFollowerEquipControl.esp"));
-        if (_OutfitEquippedFaction && _Blacklist && _TransferKey) _Ready = true;
+        _TransferKeyToggle = reinterpret_cast<RE::TESGlobal*>(loc_datahandler->LookupForm(0x000804, "BetterFollowerEquipControl.esp"));
+        _PersistFollower = reinterpret_cast<RE::TESGlobal*>(loc_datahandler->LookupForm(0x000805, "BetterFollowerEquipControl.esp"));
+        
+        VALIDATE_START()
+        VALIDATE_PTR(_OutfitEquippedFaction)
+        VALIDATE_PTR(_Blacklist)
+        VALIDATE_PTR(_TransferKey)
+        VALIDATE_PTR(_TransferKeyToggle)
+        VALIDATE_PTR(_PersistFollower)
+        VALIDATE_END()
       }
     }
     if (!_Ready) LOG("Failed to Init EquipManager")
@@ -31,7 +44,7 @@ namespace BFEC
     
     LOG("EquipManager::UpdateOutfit({}) called",a_actor->GetName())
     
-    if (a_actor->IsInFaction(_OutfitEquippedFaction))
+    if (round(_PersistFollower->value) && a_actor->IsInFaction(_OutfitEquippedFaction))
     {
       // Actor already proccessed, skip
       return false;
@@ -97,7 +110,7 @@ namespace BFEC
       // Move object from Player to Follower
       if (loc_source->IsPlayerRef())
       {
-        if (_FastButtonPressed)
+        if (_FastButtonPressed && IsTransferButtonEnabled())
         {
           if (Hooks::AddObjectToContainerHook::func(a_param.menu,a_param.object,a_param.count,a_param.mode))
           {
@@ -153,7 +166,7 @@ namespace BFEC
       // Move object from follower to Player
       else
       {
-        if (_FastButtonPressed)
+        if (_FastButtonPressed && IsTransferButtonEnabled())
         {
           if (Hooks::AddObjectToContainerHook::func(a_param.menu,a_param.object,a_param.count,1))
           {
@@ -228,6 +241,11 @@ namespace BFEC
     return round(_TransferKey->value);
   }
   
+  bool EquipManager::IsTransferButtonEnabled() const
+  {
+    return round(_TransferKeyToggle->value);
+  }
+  
   void EquipManager::AddKeySink() const
   {
     RE::BSInputDeviceManager::GetSingleton()->AddEventSink(KeyEventSink::GetSingleton());
@@ -244,6 +262,8 @@ namespace BFEC
     {
       // Check if BFEC is installed correctly
       if (!EquipManager::GetSingleton()->IsReady()) return RE::BSEventNotifyControl::kContinue;
+      
+      if (!EquipManager::GetSingleton()->IsTransferButtonEnabled()) return RE::BSEventNotifyControl::kContinue;
       
       const auto*       loc_buttonEvent = event->AsButtonEvent();
       const RE::INPUT_DEVICE loc_Device = loc_buttonEvent->GetDevice();

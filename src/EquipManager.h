@@ -20,11 +20,14 @@ namespace BFEC
         void SetFastButtonPressed(bool a_value);
         uint32_t GetTransferKey() const;
         bool IsReady() const { return _Ready;};
+        bool IsTransferButtonEnabled() const;
         void AddKeySink() const;
     private:
         RE::TESFaction* _OutfitEquippedFaction;
         RE::TESFaction* _Blacklist;
         RE::TESGlobal*  _TransferKey;
+        RE::TESGlobal*  _TransferKeyToggle;
+        RE::TESGlobal*  _PersistFollower;
         bool _FastButtonPressed = false;
         bool _Ready = false;
     };

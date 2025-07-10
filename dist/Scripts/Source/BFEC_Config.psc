@@ -1,0 +1,1 @@
+Scriptname BFEC_Config extends MCM_ConfigBase
