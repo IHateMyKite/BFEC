@@ -3,48 +3,46 @@
   "modName": "BetterFollowerEquipControl",
   "displayName": "Better Follower Equip Control",
   "minMcmVersion": 13,
-  "cursorFillMode": "topToBottom",
-  "pages": [{
-      "pageDisplayName": "Main Page",
-      "cursorFillMode": "topToBottom",
-      "content": [
-        {
-          "text": "Settings",
-          "type": "header"
-        },
-        {
-          "text": "Transfer only",
-          "type": "toggle",
-          "help": "If transfer only hotkey should be evailable",
-          "groupControl": 1,
-          "valueOptions": {
-            "sourceType": "GlobalValue",
-            "sourceForm": "BetterFollowerEquipControl.esp|804",
-            "defaultValue": 1
-          }
-        },
-        {
-          "text": "Transfer only button",
-          "type": "keymap",
-          "help": "Hotkey that can be hold while pressing on item in invetory to transfer it instantly to followers inventory without prompt",
-          "groupCondition": 1,
-          "ignoreConflicts": false,
-          "valueOptions": {
-            "sourceType": "GlobalValue",
-            "sourceForm": "BetterFollowerEquipControl.esp|803",
-            "defaultValue": 29
-          }
-        },
-        {
-          "text": "Persist follower",
-          "type": "toggle",
-          "help": "If followers outfit should be kept disabled after they are dismissed from player",
-          "valueOptions": {
-            "sourceType": "GlobalValue",
-            "sourceForm": "BetterFollowerEquipControl.esp|805",
-            "defaultValue": 1
-          }
-        }
-      ]
-  }]
+  "content": [
+    {
+      "text": "Settings",
+      "type": "header"
+    },
+    {
+      "type": "empty"
+    },
+    {
+      "text": "Fast Transfer",
+      "type": "toggle",
+      "help": "If Fast Transfer hotkey should be evailable",
+      "groupControl": 1,
+      "valueOptions": {
+        "sourceType": "GlobalValue",
+        "sourceForm": "BetterFollowerEquipControl.esp|804",
+        "defaultValue": 1
+      }
+    },
+    {
+      "text": "Fast Transfer Hotkey",
+      "type": "keymap",
+      "help": "Hotkey that can be hold while pressing on item in invetory to transfer it instantly to followers inventory without prompt",
+      "groupCondition": 1,
+      "ignoreConflicts": false,
+      "valueOptions": {
+        "sourceType": "GlobalValue",
+        "sourceForm": "BetterFollowerEquipControl.esp|803",
+        "defaultValue": 29
+      }
+    },
+    {
+      "text": "Persist follower",
+      "type": "toggle",
+      "help": "If followers outfit should be kept disabled after they are dismissed from player",
+      "valueOptions": {
+        "sourceType": "GlobalValue",
+        "sourceForm": "BetterFollowerEquipControl.esp|805",
+        "defaultValue": 1
+      }
+    }
+  ]
 }
