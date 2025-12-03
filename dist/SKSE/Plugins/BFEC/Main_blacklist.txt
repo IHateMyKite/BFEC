@@ -1,0 +1,1 @@
+Farkas=(Skyrim.esm|1A692) // Causes issues when transforming back from werewolf

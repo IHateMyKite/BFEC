@@ -2,6 +2,8 @@
 #include "Hooks.h"
 #include "EquipManager.h"
 #include "MessageBox.h"
+#include "Config.h"
+#include "List.h"
 
 using namespace PAR;
 
@@ -34,8 +36,10 @@ void Listener(SKSE::MessagingInterface::Message* message) noexcept
 {
   if (message->type == SKSE::MessagingInterface::kDataLoaded) 
   {
+    BFEC::ConfigManager::GetSingleton()->Init();
     BFEC::EquipManager::GetSingleton()->Init();
     BFEC::MessageboxManager::GetSingleton()->Init();
+    BFEC::ListManager::GetSingleton()->Init();
   }
   else if (message->type == SKSE::MessagingInterface::kInputLoaded)
   {

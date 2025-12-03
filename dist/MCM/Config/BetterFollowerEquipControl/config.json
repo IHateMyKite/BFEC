@@ -43,6 +43,26 @@
         "sourceForm": "BetterFollowerEquipControl.esp|805",
         "defaultValue": 1
       }
+    },
+    {
+      "text": "Follower only [EXPERIMENTAL]",
+      "type": "toggle",
+      "help": "EXPERIMENTAL, USE AT OWN RISK: If only followers should be targeted by BFEC. Note that disabling this might decrease stability of the game and bring other unexpected bugs. If NPC is using LeveledList, the BFEC will have issue selecting correct items. Additionaly, if NPC dies, it will spawn additional items which are already added by BFEC (doubling them)",
+      "valueOptions": {
+        "sourceType": "GlobalValue",
+        "sourceForm": "BetterFollowerEquipControl.esp|806",
+        "defaultValue": 1
+      }
+    },
+    {
+      "text": "Race check",
+      "type": "toggle",
+      "help": "If only NPCs of playable races and races in RaceList can be processed",
+      "valueOptions": {
+        "sourceType": "GlobalValue",
+        "sourceForm": "BetterFollowerEquipControl.esp|807",
+        "defaultValue": 1
+      }
     }
   ]
 }

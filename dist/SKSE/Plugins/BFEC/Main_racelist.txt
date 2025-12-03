@@ -1,0 +1,13 @@
+FoxRace=(Skyrim.esm|109C7C) # Yes, for some reason some leveled enemies use Fox race...
+
+# Vampire races
+# By default vampire races are not flagged as playable, and as such have to be added in racelist
+NordVamp      = (Skyrim.esm|88794)
+ArgonianVamp  = (Skyrim.esm|8883A)
+BretonVamp    = (Skyrim.esm|8883C)
+DarkElfVamp   = (Skyrim.esm|8883D)
+HighElfVamp   = (Skyrim.esm|88840)
+WoodElfVamp   = (Skyrim.esm|88884)
+ImperialVamp  = (Skyrim.esm|88844)
+KhajitVamp    = (Skyrim.esm|88845)
+RedGuardVamp  = (Skyrim.esm|88846)
