@@ -37,13 +37,13 @@ namespace BFEC
   {
     if (!_Ready) return true;
     
-    //LOG("EquipManager::UpdateOutfit({},{}) called",a_npc ? a_npc->GetName() : "NONE", a_actor ? a_actor->GetName() : "NONE")
+    LOG("EquipManager::UpdateOutfit({},{}) called",a_npc ? a_npc->GetName() : "NONE", a_actor ? a_actor->GetName() : "NONE")
     
     if (a_actor == nullptr || a_npc == nullptr) return true;
     
     if (a_actor->IsDead() || a_actor->IsChild())
     {
-      //LOG("EquipManager::UpdateOutfit({},{}) - Actor is child or dead -> skipping",a_npc->GetName(),a_actor->GetName())
+      LOG("EquipManager::UpdateOutfit({},{}) - Actor is child or dead -> skipping",a_npc->GetName(),a_actor->GetName())
       return true;
     }
     
@@ -53,7 +53,7 @@ namespace BFEC
     {
       if (!a_npc->GetRace()->GetPlayable() && !ListManager::GetSingleton()->IsOnRaceList(a_npc->GetRace())) 
       {
-        //LOG("EquipManager::UpdateOutfit({},{}) - Actor is of invalid race -> skipping",a_npc->GetName(),a_actor->GetName())
+        LOG("EquipManager::UpdateOutfit({},{}) - Actor is of invalid race -> skipping",a_npc->GetName(),a_actor->GetName())
         return true;
       }
     }
@@ -110,7 +110,7 @@ namespace BFEC
   
   bool EquipManager::AddObjectToContainer(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraList, int32_t a_count, RE::TESObjectREFR* a_fromRefr, Hooks::AddObjectToContainerHook::MoveItemParam a_param)
   {
-    //LOG("AddObjectToContainer({},{},{}) called",a_actor->GetName(),a_object->GetName(),a_fromRefr ? a_fromRefr->GetName() : "NONE")
+    LOG("AddObjectToContainer({},{},{}) called",a_actor->GetName(),a_object->GetName(),a_fromRefr ? a_fromRefr->GetName() : "NONE")
     if (!_Ready) return false;
     
     if (RE::UI::GetSingleton())
@@ -156,7 +156,7 @@ namespace BFEC
     
     if (!loc_followerPresent) return false;
     
-    if ((a_object->IsArmor() && ((uint32_t)reinterpret_cast<RE::TESObjectARMO*>(a_object)->GetSlotMask() > 0)) || a_object->IsWeapon() || a_object->Is(RE::FormType::Light))
+    if ((a_object->IsArmor() && (reinterpret_cast<RE::TESObjectARMO*>(a_object)->GetSlotMask().underlying() > 0)) || a_object->IsWeapon() || a_object->Is(RE::FormType::Light))
     {
       // == Check all possible combinations
       // Move object from Player to Follower

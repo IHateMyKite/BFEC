@@ -118,7 +118,7 @@ namespace BFEC::Util
       RE::TESObjectARMO* loc_armor = nullptr;
       if (loc_object != nullptr && loc_object->IsArmor()) loc_armor = static_cast<RE::TESObjectARMO*>(loc_object);
 
-      if (loc_armor != nullptr && ((uint32_t)loc_armor->GetSlotMask() & a_mask))
+      if (loc_armor != nullptr && (loc_armor->GetSlotMask().underlying() & a_mask))
       {
         loc_res = loc_armor;
         return RE::BSContainer::ForEachResult::kStop;
@@ -142,7 +142,7 @@ namespace BFEC::Util
       RE::TESObjectARMO* loc_armor = nullptr;
       if (loc_object != nullptr && loc_object->IsArmor()) loc_armor = static_cast<RE::TESObjectARMO*>(loc_object);
 
-      if (loc_armor != nullptr && ((uint32_t)loc_armor->GetSlotMask() & a_mask))
+      if (loc_armor != nullptr && (loc_armor->GetSlotMask().underlying() & a_mask))
       {
         if (std::find(loc_res.begin(),loc_res.end(),loc_armor) == loc_res.end()) loc_res.push_back(loc_armor);
       }
@@ -183,7 +183,7 @@ namespace BFEC::Util
     if (a_actor == nullptr) return loc_res;
     if (a_armor == nullptr) return loc_res;
     
-    const uint32_t loc_mask = (uint32_t)a_armor->GetSlotMask();
+    const uint32_t loc_mask = a_armor->GetSlotMask().underlying();
     
     if (loc_mask > 0)
     {

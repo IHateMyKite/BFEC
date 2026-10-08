@@ -52,6 +52,7 @@ namespace BFEC
     
     void UpdateNPCOutfitHook::thunk(RE::TESNPC* a_npc, RE::Actor* a_actor, __int64 a_unk1, bool a_CheckDead, int a_unk2, char a_unk3)
     {
+      LOG("UpdateNPCOutfitHook called")
       if (EquipManager::GetSingleton()->UpdateOutfit(a_npc,a_actor))
       {
         func(a_npc,a_actor,a_unk1,a_CheckDead,a_unk2,a_unk3);
@@ -122,6 +123,7 @@ namespace BFEC
     
     void ContainerMenuPostDisplay::thunk(RE::ContainerMenu* a_this)
     {
+      LOG("PostDisplay called")
       _mutex.lock();
       if (_callout != nullptr) 
       {
@@ -130,7 +132,6 @@ namespace BFEC
         _callout = nullptr;
       }
       _mutex.unlock();
-      
       func(a_this);
     }
     
@@ -142,9 +143,58 @@ namespace BFEC
       _callout = a_callout;
       _mutex.unlock();
     }
+    
+    inline void ContainerMenuAccept::Install(void)
+    {
+      REL::Relocation<std::uintptr_t> vtbl_containermenu{RELOCATION_ID(268222, 215061).address()};
+      func = vtbl_containermenu.write_vfunc(0x04, thunk);
+    }
+    
+    void ContainerMenuAccept::thunk(RE::ContainerMenu* a_this, RE::CallbackProcessor* a_processor)
+    {
+      LOG("Accept called")
+      auto loc_refr = RE::TESObjectREFR::LookupByHandle(RE::ContainerMenu::GetTargetRefHandle());
+      if (loc_refr && loc_refr->IsActor())
+      {
+          RE::Actor* loc_actor = reinterpret_cast<RE::Actor*>(loc_refr.get());
+          EquipManager::GetSingleton()->UpdateOutfit(loc_actor->GetActorBase(),loc_actor);
+      }
+      
+      func(a_this,a_processor);
+    }
+    
+    inline void ContainerMenuOpen::Install(void)
+    {
+      const uintptr_t loc_Address = REL::VariantID(50211, 51140,0x0 /* TODO */).address();
+      func = (decltype(func))loc_Address;
+      
+      DetourTransactionBegin();
+      DetourUpdateThread(GetCurrentThread());
+      DetourAttach(&(PVOID&)func, (PBYTE)&thunk);
+      if (DetourTransactionCommit() != NO_ERROR)
+      {
+        ERROR("Failed to install ContainerMenuOpen");
+      }
+      else
+      {
+        LOG("ContainerMenuOpen installed")
+      }
+    }
+    
+    void ContainerMenuOpen::thunk(RE::TESObjectREFR* a_target, RE::ContainerMenu::ContainerMode a_mode)
+    {
+      LOG("Open called")
+      auto loc_refr = a_target;
+      if (loc_refr && loc_refr->IsActor())
+      {
+          RE::Actor* loc_actor = reinterpret_cast<RE::Actor*>(loc_refr);
+          EquipManager::GetSingleton()->UpdateOutfit(loc_actor->GetActorBase(),loc_actor);
+      }
+      
+      func(a_target,a_mode);
+    }
+    
   }
-  
-  
   
   void HookManager::Init()
   {
@@ -155,6 +205,8 @@ namespace BFEC
       Hooks::UpdateNPCOutfitHook::Install();
       Hooks::AddObjectToContainerHook::Install();
       Hooks::ContainerMenuPostDisplay::Install();
+      //Hooks::ContainerMenuAccept::Install();
+      Hooks::ContainerMenuOpen::Install();
     }
   }
 }

@@ -4,8 +4,9 @@
 #include "MessageBox.h"
 #include "Config.h"
 #include "List.h"
+#include "Updater.h"
 
-using namespace PAR;
+using namespace BFEC;
 
 void InitializeLog([[maybe_unused]] spdlog::level::level_enum a_level = spdlog::level::info)
 {
@@ -40,6 +41,7 @@ void Listener(SKSE::MessagingInterface::Message* message) noexcept
     BFEC::EquipManager::GetSingleton()->Init();
     BFEC::MessageboxManager::GetSingleton()->Init();
     BFEC::ListManager::GetSingleton()->Init();
+    BFEC::UpdaterManager::GetSingleton()->Init();
   }
   else if (message->type == SKSE::MessagingInterface::kInputLoaded)
   {
@@ -47,7 +49,7 @@ void Listener(SKSE::MessagingInterface::Message* message) noexcept
   }
 }
 
-extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
+extern "C" DLLEXPORT bool SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
 {
   InitializeLog();
   logger::info("Loaded plugin {} {}", Plugin::NAME, Plugin::VERSION.string());
@@ -68,12 +70,12 @@ extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() noexcept {
   SKSE::PluginVersionData v;
   v.PluginName(Plugin::NAME.data());
   v.PluginVersion(Plugin::VERSION);
-  v.UsesAddressLibrary(true);
-  v.HasNoStructUse();
+  v.UsesAddressLibrary();
+  v.UsesUpdatedStructs();
   return v;
 }();
 
-extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface*, SKSE::PluginInfo* pluginInfo)
+extern "C" DLLEXPORT bool SKSEPlugin_Query(const SKSE::QueryInterface*, SKSE::PluginInfo* pluginInfo)
 {
   pluginInfo->name = SKSEPlugin_Version.pluginName;
   pluginInfo->infoVersion = SKSE::PluginInfo::kVersion;
