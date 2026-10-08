@@ -123,7 +123,7 @@ namespace BFEC
     
     void ContainerMenuPostDisplay::thunk(RE::ContainerMenu* a_this)
     {
-      LOG("PostDisplay called")
+      //LOG("PostDisplay called")
       _mutex.lock();
       if (_callout != nullptr) 
       {
@@ -152,7 +152,7 @@ namespace BFEC
     
     void ContainerMenuAccept::thunk(RE::ContainerMenu* a_this, RE::CallbackProcessor* a_processor)
     {
-      LOG("Accept called")
+      //LOG("Accept called")
       auto loc_refr = RE::TESObjectREFR::LookupByHandle(RE::ContainerMenu::GetTargetRefHandle());
       if (loc_refr && loc_refr->IsActor())
       {
@@ -183,7 +183,7 @@ namespace BFEC
     
     void ContainerMenuOpen::thunk(RE::TESObjectREFR* a_target, RE::ContainerMenu::ContainerMode a_mode)
     {
-      LOG("Open called")
+      LOG("ContainerMenuOpen called")
       auto loc_refr = a_target;
       if (loc_refr && loc_refr->IsActor())
       {

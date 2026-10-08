@@ -37,13 +37,13 @@ namespace BFEC
   {
     if (!_Ready) return true;
     
-    LOG("EquipManager::UpdateOutfit({},{}) called",a_npc ? a_npc->GetName() : "NONE", a_actor ? a_actor->GetName() : "NONE")
+    //LOG("EquipManager::UpdateOutfit({},{}) called",a_npc ? a_npc->GetName() : "NONE", a_actor ? a_actor->GetName() : "NONE")
     
     if (a_actor == nullptr || a_npc == nullptr) return true;
     
     if (a_actor->IsDead() || a_actor->IsChild())
     {
-      LOG("EquipManager::UpdateOutfit({},{}) - Actor is child or dead -> skipping",a_npc->GetName(),a_actor->GetName())
+      //LOG("EquipManager::UpdateOutfit({},{}) - Actor is child or dead -> skipping",a_npc->GetName(),a_actor->GetName())
       return true;
     }
     
@@ -53,14 +53,14 @@ namespace BFEC
     {
       if (!a_npc->GetRace()->GetPlayable() && !ListManager::GetSingleton()->IsOnRaceList(a_npc->GetRace())) 
       {
-        LOG("EquipManager::UpdateOutfit({},{}) - Actor is of invalid race -> skipping",a_npc->GetName(),a_actor->GetName())
+        //LOG("EquipManager::UpdateOutfit({},{}) - Actor is of invalid race -> skipping",a_npc->GetName(),a_actor->GetName())
         return true;
       }
     }
     
     if (ListManager::GetSingleton()->IsOnBlackList(a_actor) || a_actor->IsInFaction(_Blacklist)) 
     {
-      LOG("EquipManager::UpdateOutfit({},{}) - Actor is on BlackList -> skipping",a_npc->GetName(),a_actor->GetName())
+      //LOG("EquipManager::UpdateOutfit({},{}) - Actor is on BlackList -> skipping",a_npc->GetName(),a_actor->GetName())
       return true;
     }
     
@@ -83,7 +83,7 @@ namespace BFEC
           if (a_item->IsArmor())
           {
             auto loc_armor = a_item->As<RE::TESObjectARMO>();
-            LOG("Equipping {} on {}",a_item->GetName(),a_actor->GetName())
+            //LOG("Equipping {} on {}",a_item->GetName(),a_actor->GetName())
             //if (Util::GetItemCount(a_actor,loc_armor) == 0U)
             {
               a_actor->AddObjectToContainer(loc_armor,nullptr,1,nullptr);
@@ -110,7 +110,7 @@ namespace BFEC
   
   bool EquipManager::AddObjectToContainer(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraList, int32_t a_count, RE::TESObjectREFR* a_fromRefr, Hooks::AddObjectToContainerHook::MoveItemParam a_param)
   {
-    LOG("AddObjectToContainer({},{},{}) called",a_actor->GetName(),a_object->GetName(),a_fromRefr ? a_fromRefr->GetName() : "NONE")
+    //LOG("AddObjectToContainer({},{},{}) called",a_actor->GetName(),a_object->GetName(),a_fromRefr ? a_fromRefr->GetName() : "NONE")
     if (!_Ready) return false;
     
     if (RE::UI::GetSingleton())
