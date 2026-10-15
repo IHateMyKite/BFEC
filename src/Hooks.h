@@ -43,6 +43,22 @@ namespace BFEC
             static std::mutex _mutex;
             static std::function<CalloutFn> _callout;
         };
+        
+        class ContainerMenuAccept
+        {
+        public:
+            static inline void Install(void);
+            static void thunk(RE::ContainerMenu* a_this, RE::CallbackProcessor* a_processor);
+            static inline REL::Relocation<decltype(thunk)> func;
+        };
+        
+        class ContainerMenuOpen
+        {
+        public:
+            static inline void Install(void);
+            static void thunk(RE::TESObjectREFR* a_target, RE::ContainerMenu::ContainerMode a_mode);
+            static inline REL::Relocation<decltype(thunk)> func;
+        };
     }
     
     

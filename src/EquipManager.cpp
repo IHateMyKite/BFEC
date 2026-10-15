@@ -60,7 +60,7 @@ namespace BFEC
     
     if (ListManager::GetSingleton()->IsOnBlackList(a_actor) || a_actor->IsInFaction(_Blacklist)) 
     {
-      LOG("EquipManager::UpdateOutfit({},{}) - Actor is on BlackList -> skipping",a_npc->GetName(),a_actor->GetName())
+      //LOG("EquipManager::UpdateOutfit({},{}) - Actor is on BlackList -> skipping",a_npc->GetName(),a_actor->GetName())
       return true;
     }
     
@@ -83,7 +83,7 @@ namespace BFEC
           if (a_item->IsArmor())
           {
             auto loc_armor = a_item->As<RE::TESObjectARMO>();
-            LOG("Equipping {} on {}",a_item->GetName(),a_actor->GetName())
+            //LOG("Equipping {} on {}",a_item->GetName(),a_actor->GetName())
             //if (Util::GetItemCount(a_actor,loc_armor) == 0U)
             {
               a_actor->AddObjectToContainer(loc_armor,nullptr,1,nullptr);
@@ -156,7 +156,7 @@ namespace BFEC
     
     if (!loc_followerPresent) return false;
     
-    if ((a_object->IsArmor() && ((uint32_t)reinterpret_cast<RE::TESObjectARMO*>(a_object)->GetSlotMask() > 0)) || a_object->IsWeapon() || a_object->Is(RE::FormType::Light))
+    if ((a_object->IsArmor() && (reinterpret_cast<RE::TESObjectARMO*>(a_object)->GetSlotMask().underlying() > 0)) || a_object->IsWeapon() || a_object->Is(RE::FormType::Light))
     {
       // == Check all possible combinations
       // Move object from Player to Follower

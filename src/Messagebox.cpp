@@ -2,7 +2,7 @@
 
 SINGLETONBODY(BFEC::MessageboxManager)
 
-void BFEC::MessageboxManager::ShowMessageBox(const std::string& bodyText, const std::vector<std::string>& buttonTextValues, std::function<void(uint32_t)> callback, bool useHtml)
+void BFEC::MessageboxManager::ShowMessageBox(const std::string& bodyText, const std::vector<std::string>& buttonTextValues, std::function<void(uint8_t)> callback, bool useHtml)
 {
   auto* factoryManager = RE::MessageDataFactoryManager::GetSingleton();
   auto* uiStringHolder = RE::InterfaceStrings::GetSingleton();
@@ -13,9 +13,9 @@ void BFEC::MessageboxManager::ShowMessageBox(const std::string& bodyText, const 
   messagebox->bodyText = bodyText;
   for (auto text : buttonTextValues) messagebox->buttonText.push_back(text.c_str());
 
-  messagebox->unk4D = useHtml; // yes, this actually enables html
+  messagebox->useHtml = useHtml; // yes, this actualy enables html
 
-  messagebox->QueueMessage();
+  RE::MessageBoxMenu::QueueMessage(messagebox);
 }
 
 void BFEC::MessageboxManager::Init()

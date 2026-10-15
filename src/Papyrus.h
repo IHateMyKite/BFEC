@@ -1,13 +1,13 @@
 #pragma once
 
-constexpr std::string_view PapyrusClass = "PartialAnimationReplacer";
+constexpr std::string_view PapyrusClass = "BFEC";
 
 namespace
 {
 
 }
 
-namespace PAR::Papyrus
+namespace BFEC::Papyrus
 {
     inline bool RegisterFunctions(RE::BSScript::IVirtualMachine* vm)
     {
