@@ -144,25 +144,6 @@ namespace BFEC
       _mutex.unlock();
     }
     
-    inline void ContainerMenuAccept::Install(void)
-    {
-      REL::Relocation<std::uintptr_t> vtbl_containermenu{RELOCATION_ID(268222, 215061).address()};
-      func = vtbl_containermenu.write_vfunc(0x04, thunk);
-    }
-    
-    void ContainerMenuAccept::thunk(RE::ContainerMenu* a_this, RE::CallbackProcessor* a_processor)
-    {
-      //LOG("Accept called")
-      auto loc_refr = RE::TESObjectREFR::LookupByHandle(RE::ContainerMenu::GetTargetRefHandle());
-      if (loc_refr && loc_refr->IsActor())
-      {
-          RE::Actor* loc_actor = reinterpret_cast<RE::Actor*>(loc_refr.get());
-          EquipManager::GetSingleton()->UpdateOutfit(loc_actor->GetActorBase(),loc_actor);
-      }
-      
-      func(a_this,a_processor);
-    }
-    
     inline void ContainerMenuOpen::Install(void)
     {
       const uintptr_t loc_Address = REL::VariantID(50211, 51140,0x0 /* TODO */).address();
@@ -205,7 +186,6 @@ namespace BFEC
       Hooks::UpdateNPCOutfitHook::Install();
       Hooks::AddObjectToContainerHook::Install();
       Hooks::ContainerMenuPostDisplay::Install();
-      //Hooks::ContainerMenuAccept::Install();
       Hooks::ContainerMenuOpen::Install();
     }
   }

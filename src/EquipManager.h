@@ -3,6 +3,38 @@
 
 namespace BFEC
 {
+    class IItemChangeVisitor
+    {
+    public:
+        virtual ~IItemChangeVisitor(){}  // 00
+
+        // add
+        virtual RE::BSContainer::ForEachResult Visit(RE::InventoryEntryData* a_entryData) {return RE::BSContainer::ForEachResult::kContinue;}; // 01
+        virtual bool ShouldVisit([[maybe_unused]] RE::InventoryEntryData* a_entryData, [[maybe_unused]] RE::TESBoundObject* a_object) { return true; }  // 02
+        virtual RE::BSContainer::ForEachResult Unk_03(RE::InventoryEntryData* a_entryData, [[maybe_unused]] void* a_arg2, bool* a_arg3) // 03
+        {
+            *a_arg3 = true;
+            return Visit(a_entryData);
+        }
+
+        RE::InventoryChanges::IItemChangeVisitor& AsNativeVisitor(){return *(RE::InventoryChanges::IItemChangeVisitor*)this;}
+    };
+    static_assert(sizeof(IItemChangeVisitor) == 0x8);
+
+    // Visitor for worn items
+    class WornVisitor : public IItemChangeVisitor
+    {
+    public:
+        WornVisitor(std::function<RE::BSContainer::ForEachResult(RE::InventoryEntryData*)> a_fun) : _fun(a_fun) {};
+
+        virtual RE::BSContainer::ForEachResult Visit(RE::InventoryEntryData* a_entryData) override
+        {
+            return _fun(a_entryData);
+        }
+    private:
+        std::function<RE::BSContainer::ForEachResult(RE::InventoryEntryData*)> _fun;
+    };
+    
     class KeyEventSink : public RE::BSTEventSink<RE::InputEvent*>
     {
     SINGLETONHEADER(KeyEventSink)
@@ -33,6 +65,7 @@ namespace BFEC
         std::string GetMessageBoxStrNPC(RE::Actor* a_target,RE::TESBoundObject* a_item, bool a_html);
         void ShowMessageboxPlayer(ShowMessageBoxArgs a_args);
         void ShowMessageboxNPC(ShowMessageBoxArgs a_args);
+        int ApplyOutfitItems(RE::Actor* a_actor);
     private:
         uint8_t EquipLeveledList(RE::Actor* a_actor, RE::TESLeveledList* a_list);
         

@@ -45,9 +45,9 @@
       }
     },
     {
-      "text": "Follower only [EXPERIMENTAL]",
+      "text": "Follower only",
       "type": "toggle",
-      "help": "EXPERIMENTAL, USE AT OWN RISK: If only followers should be targeted by BFEC. Note that disabling this might decrease stability of the game and bring other unexpected bugs. If NPC is using LeveledList, the BFEC will have issue selecting correct items. Additionaly, if NPC dies, it will spawn additional items which are already added by BFEC (doubling them)",
+      "help": "If only followers should be targeted by BFEC.",
       "valueOptions": {
         "sourceType": "GlobalValue",
         "sourceForm": "BetterFollowerEquipControl.esp|806",

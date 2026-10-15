@@ -74,31 +74,32 @@ namespace BFEC
     
     if (loc_isFollower)
     {
+      ApplyOutfitItems(a_actor);
       if (a_npc->defaultOutfit)
       {
-        uint8_t loc_equippedItems = 0U;
-        a_npc->defaultOutfit->ForEachItem(
-        [&](RE::TESForm* a_item) -> RE::BSContainer::ForEachResult
-        {
-          if (a_item->IsArmor())
-          {
-            auto loc_armor = a_item->As<RE::TESObjectARMO>();
-            //LOG("Equipping {} on {}",a_item->GetName(),a_actor->GetName())
-            //if (Util::GetItemCount(a_actor,loc_armor) == 0U)
-            {
-              a_actor->AddObjectToContainer(loc_armor,nullptr,1,nullptr);
-            }
-            RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor,loc_armor);
-            loc_equippedItems++;
-          }
-          else if (a_item->Is(RE::FormType::LeveledItem))
-          {
-            // Item in outfit is leveled list. Process
-            auto loc_leveledlist = a_item->As<RE::TESLeveledList>();
-            loc_equippedItems += EquipLeveledList(a_actor,loc_leveledlist);
-          }
-          return RE::BSContainer::ForEachResult::kContinue;
-        });
+        uint8_t loc_equippedItems = ApplyOutfitItems(a_actor);
+        //a_npc->defaultOutfit->ForEachItem(
+        //[&](RE::TESForm* a_item) -> RE::BSContainer::ForEachResult
+        //{
+        //  if (a_item->IsArmor())
+        //  {
+        //    auto loc_armor = a_item->As<RE::TESObjectARMO>();
+        //    //LOG("Equipping {} on {}",a_item->GetName(),a_actor->GetName())
+        //    if (Util::GetItemCount(a_actor,loc_armor) == 0U)
+        //    {
+        //      a_actor->AddObjectToContainer(loc_armor,nullptr,1,nullptr);
+        //    }
+        //    RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor,loc_armor);
+        //    loc_equippedItems++;
+        //  }
+        //  else if (a_item->Is(RE::FormType::LeveledItem))
+        //  {
+        //    // Item in outfit is leveled list. Process
+        //    auto loc_leveledlist = a_item->As<RE::TESLeveledList>();
+        //    loc_equippedItems += EquipLeveledList(a_actor,loc_leveledlist);
+        //  }
+        //  return RE::BSContainer::ForEachResult::kContinue;
+        //});
         if (loc_equippedItems > 0) a_actor->AddToFaction(_OutfitEquippedFaction,1);
         else return true;
       }
@@ -422,5 +423,34 @@ namespace BFEC
       }
     }
     return RE::BSEventNotifyControl::kContinue;
+  }
+  
+  int EquipManager::ApplyOutfitItems(RE::Actor* a_actor)
+  {
+      if (!a_actor) return 0;
+      int loc_res = 0;
+      // Show already equipped items if some modes change outfit when actor becomes follower
+      static auto loc_visitor = WornVisitor([&](RE::InventoryEntryData* a_entry)
+      {
+          #undef GetObject
+          auto loc_object = a_entry->GetObject();
+          RE::TESObjectARMO* loc_armor = nullptr;
+          if (loc_object != nullptr && loc_object->IsArmor()) loc_armor = static_cast<RE::TESObjectARMO*>(loc_object);
+      
+          if (loc_armor != nullptr)
+          {
+              for(auto&& it : *a_entry->extraLists)
+              {
+                  if (it)
+                  {
+                      loc_res++;
+                      it->RemoveByType(RE::ExtraDataType::kOutfitItem);
+                  }
+              }
+          }
+          return RE::BSContainer::ForEachResult::kContinue;
+      });
+      a_actor->GetInventoryChanges()->VisitWornItems(loc_visitor.AsNativeVisitor());
+      return loc_res;
   }
 }
